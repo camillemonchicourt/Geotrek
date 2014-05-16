@@ -25,6 +25,16 @@ LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 
 #
+# Optimitizations
+#..........................
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.cached.Loader',
+) + TEMPLATE_LOADERS
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+#
 #  Email settings
 #..........................
 
