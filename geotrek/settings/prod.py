@@ -28,6 +28,8 @@ LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 # Optimitizations
 #..........................
 
+DATABASES['default']['CONN_MAX_AGE'] = 600
+
 TEMPLATE_LOADERS = (
     'django.template.loaders.cached.Loader',
 ) + TEMPLATE_LOADERS
