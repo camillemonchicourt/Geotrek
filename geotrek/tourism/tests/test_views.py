@@ -5,10 +5,15 @@ import json
 import mock
 from requests.exceptions import ConnectionError
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 
+from geotrek.authent.models import default_structure
+from geotrek.common.tests import CommonTest
 from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.tourism.models import DATA_SOURCE_TYPES
-from geotrek.tourism.factories import DataSourceFactory
+from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent
+from geotrek.tourism.factories import (DataSourceFactory,
+                                       TouristicContentFactory)
+from mapentity.factories import SuperUserFactory
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -202,8 +207,8 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
             geojson = json.loads(response.content)
             feature = geojson['features'][0]
             self.assertDictEqual(feature['geometry'],
-                                 {"type" : "Point",
-                                  "coordinates" : [ 6.144058, 44.826552 ]})
+                                 {"type": "Point",
+                                  "coordinates": [6.144058, 44.826552]})
 
     def test_list_of_pictures(self):
         with mock.patch('requests.get') as mocked:
@@ -215,3 +220,19 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
                                  {u'copyright': u'Christian Martelet',
                                   u'legend': u'Refuges en Valgaudemar',
                                   u'url': u'http://static.sitra-tourisme.com/filestore/objets-touristiques/images/600938.jpg'})
+
+
+class TouristicContentViewsTests(CommonTest):
+    model = TouristicContent
+    modelfactory = TouristicContentFactory
+    userfactory = SuperUserFactory
+
+    def get_bad_data(self):
+        return {'geom': 'doh!'}, _(u'Invalid geometry value.')
+
+    def get_good_data(self):
+        return {
+            'name': 'test',
+            'structure': default_structure().pk,
+            'geom': '{"type": "Point", "coordinates":[0, 0]}',
+        }

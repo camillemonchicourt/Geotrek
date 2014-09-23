@@ -13,3 +13,10 @@ class DataSourceFactory(factory.Factory):
     url = factory.Sequence(lambda n: u"http://%s.com" % n)
     type = models.DATA_SOURCE_TYPES.GEOJSON
     pictogram = get_dummy_uploaded_image()
+
+
+class TouristicContentFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicContent
+
+    name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
+    geom = 'POINT(0 0)'
