@@ -9,10 +9,17 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from mapentity.views import JSONResponseMixin
+from mapentity.views import (JSONResponseMixin, MapEntityCreate,
+                             MapEntityUpdate, MapEntityLayer, MapEntityList,
+                             MapEntityDetail, MapEntityDelete)
 
+from geotrek.authent.decorators import same_structure_required
 from geotrek.tourism.models import DataSource
+
+from .forms import TouristicContentForm
 from .helpers import post_process
+from .models import TouristicContent
+
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +66,48 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
         except (ValueError, AssertionError) as e:
             return default_result
 
-
     @method_decorator(login_required)
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
     def dispatch(self, *args, **kwargs):
         return super(DataSourceGeoJSON, self).dispatch(*args, **kwargs)
+
+
+class TouristicContentLayer(MapEntityLayer):
+    queryset = TouristicContent.objects.existing()
+    properties = ['name']
+
+
+class TouristicContentList(MapEntityList):
+    queryset = TouristicContent.objects.existing()
+    columns = ['id', 'name']
+
+
+class TouristicContentDetail(MapEntityDetail):
+    queryset = TouristicContent.objects.existing()
+
+    def context_data(self, *args, **kwargs):
+        context = super(TouristicContentDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class TouristicContentCreate(MapEntityCreate):
+    model = TouristicContent
+    form_class = TouristicContentForm
+
+
+class TouristicContentUpdate(MapEntityUpdate):
+    queryset = TouristicContent.objects.existing()
+    form_class = TouristicContentForm
+
+    @same_structure_required('tourism:touristiccontent_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TouristicContentUpdate, self).dispatch(*args, **kwargs)
+
+
+class TouristicContentDelete(MapEntityDelete):
+    model = TouristicContent
+
+    @same_structure_required('tourism:touristiccontent_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TouristicContentDelete, self).dispatch(*args, **kwargs)
