@@ -1,9 +1,14 @@
-from django.db import models
+from django.contrib.gis.db import models as gis_models
 from django.conf import settings
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
 
 from mapentity import registry
+from mapentity.models import MapEntityMixin
+
+from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -57,3 +62,30 @@ class DataSource(models.Model):
         verbose_name = _(u"External data source")
         verbose_name_plural = _(u"External data sources")
         ordering = ['title', 'url']
+
+
+class TouristicContent(MapEntityMixin, StructureRelated, TimeStampedModelMixin,
+                       NoDeleteMixin):
+    """ A generic touristic content (accomodation, museum, etc.) in the park
+    """
+    geom = gis_models.PointField(srid=settings.SRID)
+    name = gis_models.CharField(db_column="nom", max_length=128,
+                                verbose_name=_("Name"))
+
+    objects = NoDeleteMixin.get_manager_cls(gis_models.GeoManager)()
+
+    class Meta:
+        db_table = 't_t_touristic_content'
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def name_display(self):
+        return '<a href="%s" title="%s" >%s</a>' % (self.get_detail_url(),
+                                                    self,
+                                                    self)
+
+    @property
+    def name_csv_display(self):
+        return unicode(self)
