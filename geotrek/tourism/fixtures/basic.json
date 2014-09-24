@@ -1,0 +1,26 @@
+[
+{
+    "pk": 1, 
+    "model": "tourism.touristiccontentcategory", 
+    "fields": {
+        "label_it": "", 
+        "pictogram": "upload/touristiccontent_1.png", 
+        "label_es": "", 
+        "label": "H\u00e9bergements", 
+        "label_en": "", 
+        "label_fr": "H\u00e9bergements"
+    }
+},
+{
+    "pk": 2, 
+    "model": "tourism.touristiccontentcategory", 
+    "fields": {
+        "label_it": "", 
+        "pictogram": "upload/touristiccontent_2.png", 
+        "label_es": "", 
+        "label": "Activit\u00e9s", 
+        "label_en": "", 
+        "label_fr": "Activit\u00e9s"
+    }
+}
+]

@@ -1,6 +1,6 @@
 from modeltranslation.translator import translator, TranslationOptions
 
-from geotrek.tourism.models import DataSource, TouristicContent
+from geotrek.tourism.models import DataSource, TouristicContent, TouristicContentCategory
 
 
 class DataSourceTO(TranslationOptions):
@@ -11,5 +11,10 @@ class TouristicContentTO(TranslationOptions):
     fields = ('name',)
 
 
+class TouristicContentCategoryTO(TranslationOptions):
+    fields = ('label',)
+
+
 translator.register(DataSource, DataSourceTO)
 translator.register(TouristicContent, TouristicContentTO)
+translator.register(TouristicContentCategory, TouristicContentCategoryTO)
