@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from modeltranslation.translator import translator, TranslationOptions
 
 from geotrek.tourism.models import DataSource, TouristicContent, TouristicContentCategory
@@ -8,7 +10,8 @@ class DataSourceTO(TranslationOptions):
 
 
 class TouristicContentTO(TranslationOptions):
-    fields = ('name',)
+    fields = ('name',) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
 
 
 class TouristicContentCategoryTO(TranslationOptions):

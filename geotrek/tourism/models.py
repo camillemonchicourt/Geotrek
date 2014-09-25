@@ -8,7 +8,8 @@ from mapentity import registry
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin, PictogramMixin
+from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
+                                   PictogramMixin, PublishableMixin)
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -78,13 +79,11 @@ class TouristicContentCategory(PictogramMixin):
         return self.label
 
 
-class TouristicContent(MapEntityMixin, StructureRelated, TimeStampedModelMixin,
-                       NoDeleteMixin):
+class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
+                       TimeStampedModelMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     geom = gis_models.PointField(srid=settings.SRID)
-    name = gis_models.CharField(db_column="nom", max_length=128,
-                                verbose_name=_("Name"))
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='category')
 
